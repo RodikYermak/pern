@@ -17,6 +17,8 @@ app.use(express.json());
 app.use(express.static(path.resolve(__dirname, 'static')));
 app.use(fileUpload({}));
 app.use('/api', router);
+
+// always at the end of the file to catch all errors
 app.use(errorHandler);
 
 const start = async () => {
