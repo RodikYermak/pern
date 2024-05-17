@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { Context } from '../index';
 import { Navbar, Nav, Button, Container } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
-import { SHOP_ROUTE } from '../utils/consts';
+import { LOGIN_ROUTE, SHOP_ROUTE } from '../utils/consts';
 
 import { observer } from 'mobx-react-lite';
 
@@ -20,7 +20,7 @@ const NBar = observer(() => {
                     <Nav className="me-auto" style={{ color: 'white' }}>
                         <Button variant={'outline-light'}>Admin</Button>
                         <Button variant={'outline-light'} className="ml-4">
-                            Login
+                            <NavLink to={LOGIN_ROUTE}>Login</NavLink>
                         </Button>
                     </Nav>
                 ) : (
