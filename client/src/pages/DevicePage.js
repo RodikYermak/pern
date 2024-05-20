@@ -1,22 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Col, Image, Row, Card, Button } from 'react-bootstrap';
 import bigStar from '../assets/bigStar.png';
+import { useLocation } from 'react-router-dom';
+import { fetchOneDevice } from '../http/deviceAPI';
 
 const DevicePage = () => {
-    const device = { id: 1, name: 'Iphone 12 pro', price: 25000, rating: 5, img: '' };
-    const description = [
-        { id: 1, title: 'Оперативная память', description: '5 Гб' },
-        { id: 2, title: 'Камера', description: '12 Мп' },
-        { id: 3, title: 'Процессор', description: 'Pentium 3' },
-        { id: 4, title: 'Кол-во ядер', description: '2' },
-        { id: 5, title: 'Аккумулятор', description: '4000' },
-    ];
+    const [device, setDevice] = useState({ info: [] });
+    const { pathname } = useLocation();
+    // console.log(location.pathname);
+    const id = pathname.split('/')[2];
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch('http://localhost:9000/api/device/' + id);
+            const data = await response.json();
+            setDevice(data);
+        };
+        fetchData();
+        fetchOneDevice(id).then((data) => setDevice(data));
+    }, []);
 
     return (
         <Container className="mt-3">
             <Row>
                 <Col md={4}>
-                    <Image width={300} height={300} src={device.img} />
+                    <Image width={300} height={300} src={'http://localhost:9000/' + device.img} />
                 </Col>
                 <Col md={4}>
                     <Row className="d-flex flex-column align-items-center">
@@ -50,7 +58,7 @@ const DevicePage = () => {
             </Row>
             <Row className="d-flex flex-column m-3">
                 <h1>Характеристики</h1>
-                {description.map((info, index) => (
+                {device.info.map((info, index) => (
                     <Row
                         key={info.id}
                         style={{
