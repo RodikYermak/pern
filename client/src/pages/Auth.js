@@ -1,11 +1,32 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import { Container, Form, Card, Button } from 'react-bootstrap';
 import { NavLink, useLocation } from 'react-router-dom';
 import { LOGIN_ROUTE, REGISTRATION_ROUTE } from '../utils/consts';
+import { registration, login } from '../http/userAPI';
+import { observer } from 'mobx-react-lite';
+import { Context } from '../index';
 
-const Auth = () => {
+const Auth = observer(() => {
+    const { user } = useContext(Context);
     const location = useLocation();
     const isLogin = location.pathname === LOGIN_ROUTE;
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const click = async () => {
+        try {
+            let data;
+            if (isLogin) {
+                data = await login(email, password);
+            } else {
+                data = await registration(email, password);
+            }
+            user.setUser(user);
+            user.setIsAuth(true);
+        } catch (e) {
+            alert(e.response.data.message);
+        }
+    };
 
     return (
         <Container
@@ -14,8 +35,19 @@ const Auth = () => {
             <Card style={{ width: 600 }} className="p-5">
                 <h2 className="m-auto">{isLogin ? 'Authorization' : 'Registration'}</h2>
                 <Form className="d-flex flex-column">
-                    <Form.Control className="mt-3" placeholder="Enter your email"></Form.Control>
-                    <Form.Control className="mt-3" placeholder="Enter your password"></Form.Control>
+                    <Form.Control
+                        className="mt-3"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <Form.Control
+                        className="mt-3"
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        type="password"
+                    />
                     <div className="d-flex justify-content-between mt-3 align-items-center">
                         {isLogin ? (
                             <div>
@@ -28,15 +60,19 @@ const Auth = () => {
                             </div>
                         )}
                         {isLogin ? (
-                            <Button variant={'outline-success'}>Login</Button>
+                            <Button variant={'outline-success'} onClick={click}>
+                                Login
+                            </Button>
                         ) : (
-                            <Button variant={'outline-success'}>Register</Button>
+                            <Button variant={'outline-success'} onClick={click}>
+                                Register
+                            </Button>
                         )}
                     </div>
                 </Form>
             </Card>
         </Container>
     );
-};
+});
 
 export default Auth;
